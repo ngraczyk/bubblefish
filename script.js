@@ -9,6 +9,7 @@ let gameFrame = 0;
 ctx.font = canvas.width / 20 + 'px Georgia';
 let gameSpeed = 1;
 let gameOver = false;
+let enemieCreated = false;
 
 //mouse interactivity
 let canvasPosition = canvas.getBoundingClientRect();
@@ -159,6 +160,7 @@ function handleBubbles() {
       bubblesArray.splice(i, 1);
       i--;
       score++;
+      enemieCreated = false;
     }
 
   }
@@ -248,11 +250,19 @@ class Enemy {
   }
 }
 
-const enemy1 = new Enemy();
+const enemiesArray = [];
 
 function handleEnemies() {
-  enemy1.draw();
-  enemy1.update();
+
+  if (!enemieCreated && score > 0 && score % 5 == 0) {
+    enemiesArray.push(new Enemy());
+    enemieCreated = true;
+  }
+
+  for (let i = 0; i < enemiesArray.length; i++) {
+    enemiesArray[i].draw();
+    enemiesArray[i].update();
+  }
 }
 
 function handleGameOver() {
@@ -270,7 +280,8 @@ function animate() {
   player.draw();
   handleEnemies();
   ctx.fillStyle = 'black';
-  ctx.fillText('score: ' + score, 20, canvas.width / 20);
+  const level = enemiesArray.length + 1;
+  ctx.fillText('score: ' + score + ' - level: ' + level, 20, canvas.width / 20);
   gameFrame++;
   if (!gameOver) {
     requestAnimationFrame(animate);
